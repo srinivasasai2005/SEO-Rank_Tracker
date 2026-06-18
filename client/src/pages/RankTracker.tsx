@@ -3,8 +3,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Target, Plus, RefreshCw, Trash2, TrendingUp, TrendingDown, Minus, ExternalLink, Clock, Loader2, X, Search, Globe, AlertCircle, Eye, EyeOff, Filter, ArrowUpDown } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import axios from "axios";
-
 
 interface KeywordItem {
     _id: string;
@@ -44,13 +42,13 @@ export default function RankTracker() {
             if(res.data.success) {
                 setKeywords(res.data.keywords);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch keywords: ", error);
         }
         setLoading(false);
     };
 
-    const handleAdd = async (e: React.SubmitEvent) => {
+    const handleAdd = async (e: React.FormEvent) => {
         e.preventDefault();
         if(!newKeyword.trim() || !newUrl.trim()) return;
 
@@ -74,12 +72,12 @@ export default function RankTracker() {
                             clearInterval(pollInterval);
                             setKeywords((prev) => prev.map((k) => (k._id === id ? check.data.tracking : k)));
                         }
-                    } catch (error : any) {
+                    } catch (error: any) {
                         console.error("Polling error: ", error);
                     }
                 }, 3000);
             }
-        } catch (error) {
+        } catch (error: any) {
             setAddError(error.response?.data?.message || "Failed to add keyword");
             console.error("Add keyword error: ", error);
         }
@@ -102,12 +100,12 @@ export default function RankTracker() {
                             setKeywords((prev) => prev.map((k) => (k._id === id ? check.data.tracking : k)));
                             setRefreshing(null);
                         }
-                    } catch (error : any) {
+                    } catch (error: any) {
                         console.error("Polling error: ", error);
                     }
                 }, 3000);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Refresh error: ", error);
             setRefreshing(null);
         }
@@ -119,7 +117,7 @@ export default function RankTracker() {
         try {
             await api.delete(`/api/rank/${id}`);
             setKeywords((prev) => prev.filter((k) => k._id !== id));
-        } catch (error) {
+        } catch (error: any) {
             console.error("Delete error: ", error);
         }
         setDeleting(null);
@@ -132,7 +130,7 @@ export default function RankTracker() {
             if(res.data.success) {
                 setKeywords((prev) => prev.map((k) => (k._id === id ? { ...k, active: res.data.tracking.active } : k)));
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Toggle error: ", error);
         }
     };

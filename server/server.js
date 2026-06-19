@@ -14,6 +14,7 @@ import { startRankTrackingCron } from "./cron/rankTrackingCron.js";
 connectDB();
 
 const app = express();
+app.set('trust proxy', 1);
 
 // 1. Helmet: Secures HTTP headers and hides your Express framework
 app.use(helmet());
@@ -30,11 +31,11 @@ app.use(cors(corsOptions));
 
 // 3. Rate Limiting: Prevent brute-force and DDoS attacks
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per window
-  message: "Too many requests from this IP, please try again later."
-});
-app.use('/api', limiter); // Apply only to API routes
+     windowMs: 15 * 60 * 1000, // 15 minutes
+     max: 500, // Increased to accommodate the 3-second React polling
+     message: "Too many requests from this IP, please try again later."
+   });
+app.use('/api', limiter);
 
 // 4. Body Parser
 app.use(express.json());
